@@ -1,6 +1,4 @@
 package OrdersandNotificationsManagement.Services;
-
-import OrdersandNotificationsManagement.Contracts.IOrderObserver;
 import OrdersandNotificationsManagement.Entities.AbstractOrder;
 import OrdersandNotificationsManagement.Entities.Customer;
 import OrdersandNotificationsManagement.Entities.Notification;

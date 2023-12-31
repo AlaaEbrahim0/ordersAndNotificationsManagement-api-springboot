@@ -1,10 +1,6 @@
 package OrdersandNotificationsManagement.Entities;
 
-import OrdersandNotificationsManagement.Enums.OrderState;
-import OrdersandNotificationsManagement.Repositories.ProductRepository;
 import OrdersandNotificationsManagement.Services.ProductService;
-import org.apache.logging.log4j.util.PropertiesUtil;
-import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
