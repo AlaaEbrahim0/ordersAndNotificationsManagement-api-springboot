@@ -1,5 +1,6 @@
 package OrdersandNotificationsManagement.Entities;
 
+import OrdersandNotificationsManagement.Enums.OrderState;
 import org.springframework.core.annotation.Order;
 
 import java.util.List;
@@ -15,6 +16,28 @@ public abstract class AbstractOrder
     public int getCustomerId() {
         return customerId;
     }
+
+    public OrderState getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(OrderState orderState) {
+        this.orderState = orderState;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<OrderItem> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<OrderItem> products) {
+        this.products = products;
+    }
+
+    private OrderState orderState = OrderState.UNPROCESSED;
 
     public AbstractOrder(int customerId, List<OrderItem> products) {
         this.customerId = customerId;

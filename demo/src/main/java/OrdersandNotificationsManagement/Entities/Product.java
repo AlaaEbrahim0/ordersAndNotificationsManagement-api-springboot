@@ -6,7 +6,7 @@ import java.util.UUID;
 public class Product {
     public Product(String serialNumber, String name, String vendor, String category, int quantity, double price) {
         this.quantity = quantity;
-        this.serialNumber = serialNumber;
+        this.serialNumber = serialNumber    ;
         this.name = name;
         this.vendor = vendor;
         this.category = category;

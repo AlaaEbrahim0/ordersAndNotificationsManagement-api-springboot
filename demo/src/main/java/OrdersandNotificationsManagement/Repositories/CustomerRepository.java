@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CustomerRepository implements ICustomerRepository {
+public class    CustomerRepository implements ICustomerRepository {
     private final List<Customer> customers;
 
     public CustomerRepository() {
@@ -37,7 +37,6 @@ public class CustomerRepository implements ICustomerRepository {
         }
         return null;
     }
-
     @Override
     public Customer getCustomerById(int id) {
         for (Customer customer : customers) {

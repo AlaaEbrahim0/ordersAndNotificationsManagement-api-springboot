@@ -1,6 +1,6 @@
 package OrdersandNotificationsManagement.Entities;
 
-import org.springframework.core.annotation.Order;
+import OrdersandNotificationsManagement.Contracts.IOrderObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,9 @@ public class CompositeOrder extends AbstractOrder {
         return orders;
     }
     private List<SimpleOrder> orders;
+
+    private final List<IOrderObserver> observers = new ArrayList<>();
+
 
     public CompositeOrder(int customerId, List<OrderItem> products, List<SimpleOrder> orders) {
         super(customerId, products);

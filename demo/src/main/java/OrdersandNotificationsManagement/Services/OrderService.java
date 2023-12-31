@@ -1,28 +1,41 @@
 package OrdersandNotificationsManagement.Services;
 
 import OrdersandNotificationsManagement.Contracts.IOrderRepository;
+import OrdersandNotificationsManagement.Contracts.IOrderService;
 import OrdersandNotificationsManagement.Dtos.OrderToAddDto;
 import OrdersandNotificationsManagement.Entities.*;
-import OrdersandNotificationsManagement.Repositories.CustomerRepository;
+import OrdersandNotificationsManagement.Enums.NotificationTemplates;
 import OrdersandNotificationsManagement.Repositories.OrderRepository;
 import OrdersandNotificationsManagement.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-public class OrderService {
+public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final ShippingService shippingService;
+    private  final CustomerService customerService;
+
+    private  final  NotificationService notificationService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
-        this.customerRepository = customerRepository;
+    public OrderService(
+            OrderRepository orderRepository,
+            CustomerService customerService,
+            ProductRepository productRepository,
+            ShippingService shippingService,
+            NotificationService notificationService) {
+        this.customerService = customerService;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.shippingService = shippingService;
+        this.notificationService = notificationService;
     }
     public AbstractOrder placeOrder(OrderToAddDto dto) throws Exception {
         AbstractOrder order;
@@ -40,19 +53,25 @@ public class OrderService {
             order = new CompositeOrder(dto.getCustomerId(), dto.getOrderItems(), subSimpleOrders);
             handleCompositeOrder((CompositeOrder) order);
         }
+        notificationService.notify(order, NotificationTemplates.ORDER_PLACEMENT);
         return order;
+    }
+    public void shipOrder(int id) throws Exception {
+        shippingService.shipOrder(id);
+        var order = getOrderById(id);
+        notificationService.notify(order, NotificationTemplates.ORDER_SHIPPING);
     }
     private void handleSimpleOrder(SimpleOrder order) throws Exception {
         var customerId = order.getCustomerId();
         var orderTotal = calculateOrderTotal(order);
-        updateCustomerBalance(customerId, orderTotal);
+        customerService.updateCustomerBalance(customerId, orderTotal);
         orderRepository.addOrder(order);
     }
     private void handleCompositeOrder(CompositeOrder order) throws Exception {
         for (AbstractOrder subOrder : order.getOrders()) {
             handleSimpleOrder((SimpleOrder) subOrder);
         }
-        updateCustomerBalance(order.getCustomerId(), calculateOrderTotal(order));
+        customerService.updateCustomerBalance(order.getCustomerId(), calculateOrderTotal(order));
         orderRepository.addOrder(order);
     }
     private double calculateOrderTotal(AbstractOrder order) {
@@ -63,21 +82,9 @@ public class OrderService {
         }
         return total;
     }
-    private void updateCustomerBalance(int customerId, double amount) throws Exception {
-        Customer customer = customerRepository.getCustomerById(customerId);
-        if (customer != null) {
-            double newBalance = customer.getBalance() - amount;
-            if (newBalance >= 0) {
-                customer.setBalance(newBalance);
-            } else {
-                throw new Exception("Insufficient funds");
-            }
-        } else {
-            throw new Exception("Customer not found");
-        }
-    }
     public AbstractOrder getOrderById(int id) {
         return orderRepository.getOrderById(id);
     }
+
 
 }

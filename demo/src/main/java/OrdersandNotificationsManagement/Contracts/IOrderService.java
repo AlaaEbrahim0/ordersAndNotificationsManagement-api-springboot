@@ -1,9 +1,12 @@
 package OrdersandNotificationsManagement.Contracts;
 
 import OrdersandNotificationsManagement.Dtos.OrderToAddDto;
+import OrdersandNotificationsManagement.Entities.AbstractOrder;
 
 public interface IOrderService {
-    void PlaceSimpleOrder(OrderToAddDto dto);
-    void PlaceCompositeOrder();
 
+    AbstractOrder placeOrder(OrderToAddDto dto) throws Exception;
+
+    AbstractOrder getOrderById(int id);
 }
+

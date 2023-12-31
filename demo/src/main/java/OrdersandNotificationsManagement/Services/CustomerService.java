@@ -1,35 +1,34 @@
 package OrdersandNotificationsManagement.Services;
 
-import OrdersandNotificationsManagement.Dtos.CustomerDto;
-import OrdersandNotificationsManagement.Dtos.SignInDto;
+import OrdersandNotificationsManagement.Contracts.ICustomerService;
 import OrdersandNotificationsManagement.Entities.Customer;
 import OrdersandNotificationsManagement.Repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.StyledEditorKit;
-
 @Service
-public class CustomerService {
+public class CustomerService implements ICustomerService {
     private final CustomerRepository customerRepository;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-    public void registerCustomer(CustomerDto dto) throws Exception {
-        var customer = new Customer(dto.getEmail(), dto.getPassword(), dto.getBalance(), dto.getAddress());
-        if (customerRepository.getCustomerByEmail(customer.getEmail()) != null){
-            throw new Exception("email address already exist");
-        }
-        customerRepository.addCustomer(customer);
+    @Override
+    public Customer getCustomerById(int customerId) {
+        return customerRepository.getCustomerById(customerId);
     }
-
-    public Customer signCustomerIn(SignInDto dto) throws Exception {
-        var customer = customerRepository.getCustomerByEmail(dto.getEmail());
-        if (customer == null || customer.getPassword() != dto.getPassword()){
-            throw new Exception("invalid email or password");
+    @Override
+    public void updateCustomerBalance(int customerId, double amount) throws Exception {
+        var customer = customerRepository.getCustomerById(customerId);
+        if (customer == null) {
+            throw new Exception("Customer not found");
         }
-        return customer;
+        double newBalance = customer.getBalance() - amount;
+        if (newBalance >= 0) {
+        customer.setBalance(newBalance);
+        } else {
+            throw new Exception("Insufficient funds");
+        }
     }
 }

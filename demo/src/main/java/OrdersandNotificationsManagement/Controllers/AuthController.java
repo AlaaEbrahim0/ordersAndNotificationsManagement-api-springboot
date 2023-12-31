@@ -1,10 +1,8 @@
 package OrdersandNotificationsManagement.Controllers;
 
 import OrdersandNotificationsManagement.Dtos.CustomerDto;
-import OrdersandNotificationsManagement.Repositories.CustomerRepository;
-import OrdersandNotificationsManagement.Entities.Customer;
 import OrdersandNotificationsManagement.Dtos.SignInDto;
-import OrdersandNotificationsManagement.Services.CustomerService;
+import OrdersandNotificationsManagement.Services.AuthService;
 import jakarta.servlet.http.HttpSession;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/customers")
-public class CustomerController {
-    private final CustomerService customerService;
-
+public class AuthController {
+    private final AuthService authService;
     @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
     @PostMapping("/register")
     public ResponseEntity<?> Register(@RequestBody CustomerDto dto) throws BadRequestException {
         try{
-            customerService.registerCustomer(dto);
+            authService.registerCustomer(dto);
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(dto.getEmail() + " has been created successfully");
@@ -35,13 +32,12 @@ public class CustomerController {
                     .body(ex.getMessage());
         }
     }
-
     @PostMapping("/sign-in")
     public ResponseEntity<?> SignIn(@RequestBody SignInDto dto, HttpSession session){
         try{
-            var customer = customerService.signCustomerIn(dto);
-            var key = "customer_" + customer.getId();
-            session.setAttribute(key, customer);
+            var customer = authService.signCustomerIn(dto);
+            var key = customer.getId();
+            session.setAttribute(String.valueOf(key), customer);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body("successful login");
