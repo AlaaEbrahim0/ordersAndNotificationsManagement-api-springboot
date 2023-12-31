@@ -1,6 +1,7 @@
 package OrdersandNotificationsManagement.Entities;
 
 import OrdersandNotificationsManagement.Repositories.ProductRepository;
+import OrdersandNotificationsManagement.Services.ProductService;
 import org.springframework.core.annotation.Order;
 
 import java.lang.annotation.Annotation;
@@ -12,7 +13,7 @@ public class SimpleOrder extends AbstractOrder {
         super(customerId, products);
     }
     @Override
-    public String displayOrderInfo(ProductRepository productRepository) {
+    public String displayOrderInfo(ProductService productService) {
         var sb = new StringBuilder();
         sb.append("Order Details:\n");
         sb.append("Order ID: ").append(this.id).append("\n");
@@ -20,14 +21,14 @@ public class SimpleOrder extends AbstractOrder {
         sb.append("Products:\n");
 
         for (var orderItem : this.products) {
-            var product = productRepository.getBySerialNumber(orderItem.getProductSerialNumber());
+            var product = productService.getBySerialNumber(orderItem.getProductSerialNumber());
             sb.append("  - Product: ").append(product.getName())
                     .append(", Price: ").append(product.getPrice())
                     .append(", Quantity: ").append(orderItem.getQuantity())
                     .append("\n");
         }
 
-        sb.append("Total Order Cost: ").append(calculateOrderTotal(this, productRepository)).append("\n");
+        sb.append("Total Order Cost: ").append(calculateOrderTotal(this, productService)).append("\n");
 
         return sb.toString();
     }

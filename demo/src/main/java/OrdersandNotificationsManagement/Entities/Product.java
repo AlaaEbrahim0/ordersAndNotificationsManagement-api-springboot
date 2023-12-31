@@ -16,12 +16,12 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "serialNumber='" + serialNumber + '\'' +
-                ", name='" + name + '\'' +
-                ", vendor='" + vendor + '\'' +
-                ", category='" + category + '\'' +
-                ", price=" + price +
-                '}';
+                "\n  serialNumber='" + serialNumber + '\'' +
+                "\n  name='" + name + '\'' +
+                "\n  vendor='" + vendor + '\'' +
+                "\n  category='" + category + '\'' +
+                "\n  price=" + price +
+                "\n}";
     }
 
     private  String serialNumber;

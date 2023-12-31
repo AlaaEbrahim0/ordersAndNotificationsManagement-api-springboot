@@ -22,6 +22,7 @@ public class OrderService implements IOrderService {
     private final ProductRepository productRepository;
     private final ShippingService shippingService;
     private  final CustomerService customerService;
+    private  final ProductService productService;
     private  final  NotificationService notificationService;
 
     @Autowired
@@ -29,12 +30,13 @@ public class OrderService implements IOrderService {
             OrderRepository orderRepository,
             CustomerService customerService,
             ProductRepository productRepository,
-            ShippingService shippingService,
+            ShippingService shippingService, ProductService productService,
             NotificationService notificationService) {
         this.customerService = customerService;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.shippingService = shippingService;
+        this.productService = productService;
         this.notificationService = notificationService;
     }
     public AbstractOrder placeOrder(OrderToAddDto dto) throws Exception {
@@ -63,13 +65,16 @@ public class OrderService implements IOrderService {
         var customerId = order.getCustomerId();
         var orderTotal = calculateOrderTotal(order);
         customerService.updateCustomerBalance(customerId, orderTotal);
+        productService.decreaseProductQuantity(order);
         orderRepository.addOrder(order);
     }
     private void handleCompositeOrder(CompositeOrder order) throws Exception {
         for (AbstractOrder subOrder : order.getOrders()) {
             handleSimpleOrder((SimpleOrder) subOrder);
+            orderRepository.addOrder(subOrder);
         }
         customerService.updateCustomerBalance(order.getCustomerId(), calculateOrderTotal(order));
+        productService.decreaseProductQuantity(order);
         orderRepository.addOrder(order);
     }
     private double calculateOrderTotal(AbstractOrder order) {
@@ -81,11 +86,11 @@ public class OrderService implements IOrderService {
         return total;
     }
     public String displayOrderDetails(AbstractOrder order){
-        return order.displayOrderInfo(productRepository);
+        return order.displayOrderInfo(productService);
     }
     public AbstractOrder getOrderById(int id) {
-        return orderRepository.getOrderById(id);
+        var order = orderRepository.getOrderById(id);
+        return  order;
     }
-
 
 }

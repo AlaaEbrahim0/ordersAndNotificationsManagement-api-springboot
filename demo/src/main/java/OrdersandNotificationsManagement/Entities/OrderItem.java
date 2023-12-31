@@ -1,6 +1,6 @@
 package OrdersandNotificationsManagement.Entities;
 
-public class OrderItem {
+public class  OrderItem {
     public String getProductSerialNumber() {
         return productSerialNumber;
     }
@@ -19,11 +19,9 @@ public class OrderItem {
                 ", quantity=" + quantity +
                 '}';
     }
-
     public int getQuantity() {
         return quantity;
     }
-
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }

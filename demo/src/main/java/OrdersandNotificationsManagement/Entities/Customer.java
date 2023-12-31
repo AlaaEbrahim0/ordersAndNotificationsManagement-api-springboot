@@ -26,6 +26,17 @@ public class Customer {
         this.balance = customer.getBalance();
     }
 
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", address='" + address + '\'' +
+                ", balance=" + balance +
+                '}';
+    }
+
     public String getEmail() {
             return email;
     }

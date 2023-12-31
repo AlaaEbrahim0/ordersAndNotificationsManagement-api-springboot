@@ -2,12 +2,13 @@ package OrdersandNotificationsManagement.Entities;
 
 import OrdersandNotificationsManagement.Enums.OrderState;
 import OrdersandNotificationsManagement.Repositories.ProductRepository;
+import OrdersandNotificationsManagement.Services.ProductService;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
-public abstract class AbstractOrder
+public abstract class   AbstractOrder
 {
     public int getId() {
         return id;
@@ -29,10 +30,10 @@ public abstract class AbstractOrder
         idCounter++;
     }
 
-    protected double calculateOrderTotal(AbstractOrder order, ProductRepository productRepository) {
+    protected double calculateOrderTotal(AbstractOrder order, ProductService productService) {
         double total = 0.0;
         for (var orderItem : order.getOrderItems()) {
-            var product = productRepository.getBySerialNumber(orderItem.getProductSerialNumber());
+            var product = productService.getBySerialNumber(orderItem.getProductSerialNumber());
             total += orderItem.getQuantity() * product.getPrice();
         }
         return total;
@@ -44,6 +45,10 @@ public abstract class AbstractOrder
     public List<OrderItem> getOrderItems() {
         return products;
     }
+
+    public void addOrderItem(OrderItem orderItem){
+        products.add(orderItem);
+    }
     protected List<OrderItem> products;
-    public abstract String displayOrderInfo(ProductRepository productRepository);
+    public abstract String displayOrderInfo(ProductService productService);
 }

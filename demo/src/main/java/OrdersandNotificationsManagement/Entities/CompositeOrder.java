@@ -2,6 +2,7 @@ package OrdersandNotificationsManagement.Entities;
 
 import OrdersandNotificationsManagement.Contracts.IOrderObserver;
 import OrdersandNotificationsManagement.Repositories.ProductRepository;
+import OrdersandNotificationsManagement.Services.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class CompositeOrder extends AbstractOrder {
     }
 
     @Override
-    public String displayOrderInfo(ProductRepository productRepository) {
+    public String displayOrderInfo(ProductService productService) {
         StringBuilder sb = new StringBuilder();
         sb.append("Main (Composite) Order:\n");
         sb.append("Order ID: ").append(this.id).append("\n");
@@ -31,18 +32,18 @@ public class CompositeOrder extends AbstractOrder {
         sb.append("Products:\n");
 
         for (var orderItem : this.products) {
-            var product = productRepository.getBySerialNumber(orderItem.getProductSerialNumber());
+            var product = productService.getBySerialNumber(orderItem.getProductSerialNumber());
             sb.append("  - Product: ").append(product.getName())
                     .append(", Price: ").append(product.getPrice())
                     .append(", Quantity: ").append(orderItem.getQuantity())
                     .append("\n");
         }
 
-        sb.append("Total Order Cost: ").append(calculateOrderTotal(this, productRepository)).append("\n");
+        sb.append("Total Order Cost: ").append(calculateOrderTotal(this, productService)).append("\n");
 
         sb.append("SubOrders:\n");
         for (var order : orders) {
-            sb.append(order.displayOrderInfo(productRepository));
+            sb.append(order.displayOrderInfo(productService));
         }
 
         return sb.toString();

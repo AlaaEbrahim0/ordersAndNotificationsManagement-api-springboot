@@ -50,12 +50,16 @@ public class OrderController {
     @PostMapping("/{orderId}/ship")
     public ResponseEntity<?> shipOrder(@PathVariable int orderId, HttpSession httpSession) {
         try {
-            var customerId = orderService.getOrderById(orderId).getCustomerId();
-            if (!authService.isSignedIn(customerId, httpSession)){
-                return ResponseEntity.status(401).body("unauthenticated");
+            var order = orderService.getOrderById(orderId);
+            if (order == null){
+                return ResponseEntity.status(404).body("order doesn't exist");
+            }
+
+            if (!authService.isSignedIn(order.getCustomerId(), httpSession)){
+                return ResponseEntity.status(401).body("unauthenticated please sign in");
             }
             orderService.shipOrder(orderId);
-            return ResponseEntity.status(200).body("Order shipped successfully");
+            return ResponseEntity.status(200).body("The order is on it's way");
         } catch (Exception ex) {
             return ResponseEntity.status(400).body(ex.getMessage());
         }

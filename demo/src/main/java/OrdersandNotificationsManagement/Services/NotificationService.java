@@ -35,5 +35,22 @@ public class NotificationService {
         Notification notification = notificationTemplateService.createNotification(template, placeholders);
         addToNotificationQueue(notification);
     }
+    public String listAllNotificationsInQueue() {
+        StringJoiner result = new StringJoiner("\n");
+        result.add("List of Notifications in Queue:");
+        result.add("-----------------------------------");
+
+        for (Notification notification : notificationQueue) {
+            result.add("Subject: " + notification.getSubject());
+            result.add("Content: " + notification.getContent());
+            result.add("Recipient: " + notification.getReceipent());
+            result.add("-----------------------------------");
+        }
+
+        if (notificationQueue.isEmpty()) {
+            result.add("No notifications in the queue.");
+        }
+        return result.toString();
+    }
 
 }
