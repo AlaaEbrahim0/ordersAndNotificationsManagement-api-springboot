@@ -40,13 +40,7 @@ public class ShippingService implements IShippingService {
         } else {
             throw new Exception("Order not found");
         }
-        var placeholders = new HashMap<String, String>();
-        var customer = customerService.getCustomerById(order.getCustomerId());
-        placeholders.put("customerEmail",  customer.getEmail());
-        placeholders.put("orderId", String.valueOf(order.getId()));
-
-        var notification = new NotificationTemplateService().createNotification(NotificationTemplates.ORDER_PLACEMENT, placeholders);
-        notificationService.addToNotificationQueue(notification);
+        notificationService.notify(order, NotificationTemplates.ORDER_SHIPPING);
     }
     @Override
     public double getShippingFees(AbstractOrder order) {

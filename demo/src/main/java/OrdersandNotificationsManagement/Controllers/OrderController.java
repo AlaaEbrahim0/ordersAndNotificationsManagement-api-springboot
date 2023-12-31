@@ -32,12 +32,21 @@ public class OrderController {
         }
         try{
             var order = orderService.placeOrder(dto);
-            return ResponseEntity.status(200).body(order.displayOrderInfo());
+            return ResponseEntity.status(200).body(orderService.displayOrderDetails(order));
         }
         catch (Exception ex){
                 return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getOrderDetails(@PathVariable int orderId){
+        var order = orderService.getOrderById(orderId);
+        if (order == null){
+            return ResponseEntity.status(404).body("order doesn't exist");
+        }
+        return  ResponseEntity.status(200).body(orderService.displayOrderDetails(order));
+    }
+
     @PostMapping("/{orderId}/ship")
     public ResponseEntity<?> shipOrder(@PathVariable int orderId, HttpSession httpSession) {
         try {

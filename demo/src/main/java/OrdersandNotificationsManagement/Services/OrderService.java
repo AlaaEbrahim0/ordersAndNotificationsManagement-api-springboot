@@ -7,6 +7,7 @@ import OrdersandNotificationsManagement.Entities.*;
 import OrdersandNotificationsManagement.Enums.NotificationTemplates;
 import OrdersandNotificationsManagement.Repositories.OrderRepository;
 import OrdersandNotificationsManagement.Repositories.ProductRepository;
+import org.apache.el.parser.AstBracketSuffix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ public class OrderService implements IOrderService {
     private final ProductRepository productRepository;
     private final ShippingService shippingService;
     private  final CustomerService customerService;
-
     private  final  NotificationService notificationService;
 
     @Autowired
@@ -58,8 +58,6 @@ public class OrderService implements IOrderService {
     }
     public void shipOrder(int id) throws Exception {
         shippingService.shipOrder(id);
-        var order = getOrderById(id);
-        notificationService.notify(order, NotificationTemplates.ORDER_SHIPPING);
     }
     private void handleSimpleOrder(SimpleOrder order) throws Exception {
         var customerId = order.getCustomerId();
@@ -81,6 +79,9 @@ public class OrderService implements IOrderService {
             total += orderItem.getQuantity() * product.getPrice();
         }
         return total;
+    }
+    public String displayOrderDetails(AbstractOrder order){
+        return order.displayOrderInfo(productRepository);
     }
     public AbstractOrder getOrderById(int id) {
         return orderRepository.getOrderById(id);
